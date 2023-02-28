@@ -7,7 +7,7 @@ from src.utils.performance import measure_time_ns
 
 class BookManager:
     def __init__(self, book: Book):
-        self.book = book
+        self.book: Book = book
         self.step_size = 0.01
 
     @measure_time_ns

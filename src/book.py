@@ -68,15 +68,15 @@ class Book:
 
     def get_top_of_the_book(self) -> dict[float, int]:
         best_bid: Limit = self.highest_buy
-        result: dict[float, int] = {}
+        top_of_the_book: dict[float, int] = {}
         if best_bid is None:
-            return result
+            return top_of_the_book
 
         for index in range(best_bid.position, best_bid.position + config.TOP_OF_THE_BOOK_PRICE_COUNT):
             limit = self.buy_limits[index]
-            result[limit.price] = limit.size
+            top_of_the_book[limit.price] = limit.size
 
-        return result
+        return top_of_the_book
 
     def get_queue_position(self, unique_order_id: uuid) -> int:
         order: OrderBookEntry = self.order_id_map.get(unique_order_id)
@@ -85,15 +85,15 @@ class Book:
 
         position_of_order = order.limit.position
 
-        result: int = 0
+        target_queue_position: int = 0
         if position_of_order < self.highest_buy.position:
             pass
         elif position_of_order == self.highest_buy.position:
-            result = order.total_amount_to_head()
+            target_queue_position = order.total_amount_to_head()
         else:
             for index in range(self.highest_buy.position, position_of_order):
-                result += self.buy_limits[index].size
+                target_queue_position += self.buy_limits[index].size
 
-            result += order.total_amount_to_head()
+            target_queue_position += order.total_amount_to_head()
 
-        return result
+        return target_queue_position
