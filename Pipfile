@@ -5,6 +5,7 @@ name = "pypi"
 
 [packages]
 pandas = "1.5"
+loguru = "*"
 
 [dev-packages]
 pytest = "7.2.1"

@@ -12,22 +12,26 @@ class OrderBookEntry:
     price: float
     is_buy: bool
     entry_time: int
-    event_time: Optional[int] = field(init=False)
-    next_order: Optional[OrderBookEntry] = field(init=False, repr=False)
-    prev_order: Optional[OrderBookEntry] = field(init=False, repr=False)
-    limit: 'Limit' = field(init=False, repr=False)  # To avoid circular import
+    event_time: Optional[int] = field(default=None)
+    next_order: Optional[OrderBookEntry] = field(default=None, repr=False)
+    prev_order: Optional[OrderBookEntry] = field(default=None, repr=False)
+    limit: 'Limit' = field(default=None, repr=False)  # To avoid circular import
 
     def add_to_head(self, other_order: OrderBookEntry) -> None:
-        self.next_order = other_order
-        other_order.prev_order = self
+        if other_order:
+            self.next_order = other_order
+            other_order.prev_order = self
 
     def add_to_tail(self, other_order: OrderBookEntry) -> None:
-        self.prev_order = other_order
-        other_order.next_order = self
+        if other_order:
+            self.prev_order = other_order
+            other_order.next_order = self
 
     def break_link(self):
-        self.prev_order.next_order = self.next_order
-        self.next_order.prev_order = self.prev_order
+        if self.prev_order:
+            self.prev_order.next_order = self.next_order
+        if self.next_order:
+            self.next_order.prev_order = self.prev_order
         self.prev_order = None
         self.next_order = None
 

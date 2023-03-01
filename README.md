@@ -2,6 +2,12 @@
 
 ---
 
+## Usage
+
+Program reads the csv file under the root folder, path is can be configured in config.py. When program runs, it reads
+the given csv file and populates the order book. It then writes top of the book and queue position of an order to the
+std out. Unique id of the order used for queue position can be configured in config.py
+
 ## Performance
 
 According to my calculations approximate complexities of order book operations are as follows:
@@ -15,9 +21,8 @@ According to my calculations approximate complexities of order book operations a
 
 ### Assumptions
 
-1. Normally an order book would have buy and sell sides, however provided data does not have such information. I
-   modelled the order book to have both sides but will only populate buy side due to lack of information about order
-   side.
+1. Normally an order book would have buy and sell sides, however provided data only has buy orders. I modelled the order
+   book to have both sides but will only populate buy side
 2. Provided data set includes queue positions however, assuming the requests the system receives will be in order with
    respect to their execution time. I chose to sort the data in the same time frame by queue position. Therefore, I did
    not perform a search operation within the limit to place the order. Instead, I placed the order at the tail of limit
@@ -60,4 +65,5 @@ Notes about general improvements for the project
 #### Performance
 
 - Write performance tests that can run at different targets
-- Visualize the run time of critical parts of the program to easily identify bottlenecks.
+- Visualize the performance metrics of critical parts of the program to easily identify bottlenecks.
+

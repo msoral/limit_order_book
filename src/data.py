@@ -1,8 +1,9 @@
 import uuid
 from dataclasses import dataclass
-from pathlib import Path
 
 import pandas as pd
+
+import config
 
 
 @dataclass(slots=True, kw_only=True)
@@ -16,10 +17,7 @@ class Order:
 
 
 class DataImporter:
-    PROJECT_ROOT = Path().absolute()
-    DATA_PATH = f'{PROJECT_ROOT}/data.csv'
-
-    def __init__(self, data_path=DATA_PATH):
+    def __init__(self, data_path=config.DATA_PATH):
         self.df: pd.DataFrame = pd.read_csv(data_path)
         self.df.columns = ['time', 'message_type', 'price', 'queue_position', 'size', 'order_id']
 
