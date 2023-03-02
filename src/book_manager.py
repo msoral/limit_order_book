@@ -22,11 +22,19 @@ class BookManager:
             else:  # delete
                 self.book.delete_order(order.order_id)
 
-    def show_order_book(self) -> None:
-        non_empty_positions = [limit for limit in self.book.buy_limits if limit.size != 0]
+    def show_order_book_limits(self) -> None:
+        non_empty_limits = [limit for limit in self.book.buy_limits if limit.size != 0]
         order_book_display = f"Highest buy: {self.book.highest_buy} \n Lowest sell: {self.book.lowest_sell} \n" \
-                             f"Positions: {non_empty_positions}"
+                             f"Positions: {non_empty_limits}"
         logger.info(order_book_display)
+
+    def show_order_book_entries(self) -> None:
+        non_empty_limits = [limit for limit in self.book.buy_limits if limit.size != 0]
+        for limit in non_empty_limits:
+            order = limit.head_order
+            while order is not None:
+                logger.debug(order)
+                order = order.next_order
 
     def pre_allocate_with_boundaries(self, minimum: float, maximum: float) -> None:
         count = int((maximum - minimum) / self.step_size + 1)  # To include both boundaries add 1

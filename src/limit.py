@@ -26,6 +26,9 @@ class Limit:
     def add(self, order: OrderBookEntry) -> 'Limit':
         order.add_to_tail(self.tail_order)
 
+        if self.head_order is None:
+            self.head_order = order
+
         self.tail_order = order
         self.size += order.amount
         return self
@@ -37,7 +40,7 @@ class Limit:
 
     def execute(self, order: OrderBookEntry, order_size: int) -> None:
         order.amount -= order_size
-        self.size -= order.amount
+        self.size -= order_size
         self.total_volume += order_size
         if order.amount == 0:
             order.break_link()

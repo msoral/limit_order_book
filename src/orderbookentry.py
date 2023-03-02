@@ -12,7 +12,6 @@ class OrderBookEntry:
     price: float
     is_buy: bool
     entry_time: int
-    event_time: Optional[int] = field(default=None)
     next_order: Optional[OrderBookEntry] = field(default=None, repr=False)
     prev_order: Optional[OrderBookEntry] = field(default=None, repr=False)
     limit: 'Limit' = field(default=None, repr=False)  # To avoid circular import

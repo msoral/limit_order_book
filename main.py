@@ -17,10 +17,13 @@ def main() -> None:
     book_manager.pre_allocate_with_boundaries(min_price, max_price)
     book_manager.populate(orders)
     if config.SHOW_FINAL_ORDER_BOOK:
-        book_manager.show_order_book()
+        book_manager.show_order_book_limits()
+        book_manager.show_order_book_entries()
     logger.info(f"Top of the book: {order_book.get_top_of_the_book()}")
     order_id = config.ORDER_ID_FOR_QUEUE_POSITION_QUERY
-    logger.info(f"Queue position of order({order_id}): {order_book.get_queue_position(order_id)}")
+    queue_position: int = order_book.get_queue_position(order_id)
+    if queue_position is not None:
+        logger.info(f"Queue position of order({order_id}): {queue_position}")
 
 
 if __name__ == '__main__':

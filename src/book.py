@@ -6,6 +6,7 @@ from loguru import logger
 import config
 from src.limit import Limit
 from src.orderbookentry import OrderBookEntry
+from src.top_of_the_book_result import TopOfTheBookResult
 
 
 @dataclass(slots=True)
@@ -88,36 +89,43 @@ class Book:
             logger.error(f"Order id: {order_id} caused ")
             raise e
 
-    def get_top_of_the_book(self) -> dict[float, int]:
+    def get_top_of_the_book(self) -> list[TopOfTheBookResult]:
         best_bid: Limit = self.highest_buy
-        top_of_the_book: dict[float, int] = {}
+        top_of_the_book: list[TopOfTheBookResult] = list()
         if best_bid is None:
             return top_of_the_book
 
         count = 0
         for index in reversed(range(best_bid.position + 1)):
             limit = self.buy_limits[index]
-            top_of_the_book[limit.price] = limit.size
+            if limit.size <= 0:
+                continue
+
+            top_of_the_book_result = TopOfTheBookResult(limit.price, limit.size)
+            top_of_the_book.append(top_of_the_book_result)
             count += 1
             if count == config.TOP_OF_THE_BOOK_PRICE_COUNT:
                 break
 
         return top_of_the_book
 
-    def get_queue_position(self, unique_order_id: uuid) -> int:
+    # Below implementation is only true for buy orders, if statement conditions should reverse for sell orders.
+    def get_queue_position(self, unique_order_id: uuid) -> int | None:
         order: OrderBookEntry = self.order_id_map.get(unique_order_id)
         if order is None:
-            raise KeyError("No order was found with given id.")
+            logger.error("No order was found with id: {}.", unique_order_id)
+            return
 
         position_of_order = order.limit.position
 
         target_queue_position: int = 0
-        if position_of_order < self.highest_buy.position:
+        if position_of_order > self.highest_buy.position:
             pass
         elif position_of_order == self.highest_buy.position:
             target_queue_position = order.total_amount_to_head()
         else:
-            for index in range(self.highest_buy.position, position_of_order):
+            for index in range(position_of_order,
+                               self.highest_buy.position):  # If entry is not in this limit we can get the total size.
                 target_queue_position += self.buy_limits[index].size
 
             target_queue_position += order.total_amount_to_head()
