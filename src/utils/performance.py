@@ -1,13 +1,15 @@
 from time import perf_counter_ns
 from typing import Callable
 
+from loguru import logger
+
 
 def measure_time_ns(func: Callable) -> Callable:
-    def wrapper():
+    def wrapper(*args, **kwargs):
         start = perf_counter_ns()
-        func()
+        returned_value = func(*args, **kwargs)
         end = perf_counter_ns()
-        # FIXME: Change to logging.
-        print(f'Total time elapsed for {func.__name__}: {end - start} nanoseconds.')
+        logger.info(f'Total time elapsed {func.__name__}: {end - start} nanoseconds.')
+        return returned_value
 
     return wrapper

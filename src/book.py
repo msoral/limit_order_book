@@ -7,6 +7,7 @@ import config
 from src.limit import Limit
 from src.orderbookentry import OrderBookEntry
 from src.top_of_the_book_result import TopOfTheBookResult
+from src.utils import measure_time_ns
 
 
 @dataclass(slots=True)
@@ -89,6 +90,7 @@ class Book:
             logger.error(f"Order id: {order_id} caused ")
             raise e
 
+    @measure_time_ns
     def get_top_of_the_book(self) -> list[TopOfTheBookResult]:
         best_bid: Limit = self.highest_buy
         top_of_the_book: list[TopOfTheBookResult] = list()
@@ -110,6 +112,7 @@ class Book:
         return top_of_the_book
 
     # Below implementation is only true for buy orders, if statement conditions should reverse for sell orders.
+    @measure_time_ns
     def get_queue_position(self, unique_order_id: uuid) -> int | None:
         order: OrderBookEntry = self.order_id_map.get(unique_order_id)
         if order is None:

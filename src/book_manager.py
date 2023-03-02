@@ -5,6 +5,7 @@ from src.book import Book
 from src.data import Order
 from src.limit import Limit
 from src.orderbookentry import OrderBookEntry
+from src.utils.performance import measure_time_ns
 
 
 class BookManager:
@@ -12,6 +13,7 @@ class BookManager:
         self.book: Book = book
         self.step_size = 0.01
 
+    @measure_time_ns
     def populate(self, orders: list[Order]) -> None:
         for order in orders:
             if order.message_type == 'A':  # add
