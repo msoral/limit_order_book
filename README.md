@@ -4,9 +4,9 @@
 
 ## Usage
 
-Program reads the csv file under the root folder, path is can be configured in config.py. When program runs, it reads
-the given csv file and populates the order book. It then writes top of the book and queue position of an order to the
-std out. Unique id of the order used for queue position can be configured in config.py
+Program reads the csv file under the root folder, path can be configured in config.py. When program runs, it reads the
+given csv file and populates the order book. It then writes top of the book and queue position of an order to the std
+out. Unique id of the order used for queue position can be configured in config.py
 
 ## Performance
 
